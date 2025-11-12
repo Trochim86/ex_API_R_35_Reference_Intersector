@@ -1,0 +1,25 @@
+		public void referenceIntersector()
+		{
+			Document doc = this.ActiveUIDocument.Document;
+			View3D view3d = doc.ActiveView as View3D;
+			if (view3d == null)
+			{
+				TaskDialog.Show("Error","Active view must be a 3d view");
+				return;
+			}
+			ReferenceIntersector ri = new ReferenceIntersector(view3d);
+			IList<ReferenceWithContext> refWithContextList = ri.Find(XYZ.Zero,XYZ.BasisY);
+			string data = "";
+			foreach (ReferenceWithContext rwc in refWithContextList)
+			{
+				Reference r = rwc.GetReference();
+				double d = rwc.Proximity;
+				Element e = doc.GetElement(r);
+				
+				GeometryObject o = e.GetGeometryObjectFromReference(r);
+				string oType = o.GetType().ToString();
+				data += oType + " - " + e.Name + " - " + d + Environment.NewLine;
+			}
+			TaskDialog.Show("elements hit",data);
+		}
+		
